@@ -30,5 +30,7 @@
 *.exe
 *.out
 *.app
-demo
 test
+.idea/
+CMakeLists.txt
+cmake-build-debug/
