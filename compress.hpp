@@ -18,12 +18,8 @@ namespace itertools {
         decltype((_iter.begin())) _end_iter;
 
     public:
-        /**
-         * explict keyword uses for prevent the compiler from using implicit conversation for constructors who
-         * accepts 1 primitive type. The compiler as default behavior tries to do implicit conversation of that
-         * type to members exists within the class, hiding a bug.
-         */
-
+        //l-value ctor
+        compress(Iter & iter, vector<bool> & filter): _iter(iter), _filter(filter), _beg(_iter.begin()), _end_iter(iter.end()){}
         //We need a reference to reference ctor in order to support passing reference of rvalue(for range())
         compress(Iter && iter, vector<bool> & filter): _iter(iter), _filter(filter), _beg(_iter.begin()), _end_iter(iter.end()){}
 
