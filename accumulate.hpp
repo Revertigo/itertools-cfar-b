@@ -6,7 +6,6 @@
 #define ITERTOOLS_CFAR_A_ACCUMULATE_HPP
 
 #include <functional>
-#include<type_traits>
 
 /**
  * Lambda expression:
@@ -19,8 +18,6 @@ namespace itertools {
     template<typename Iter, typename lambada = std::plus<>>
     class accumulate {
         Iter & _iter; //We don't want to duplicate the container.
-        decltype((_iter.begin())) _beg;//decltype uses to deduce runtime type of an object
-        decltype((_iter.begin())) _end_iter;
         lambada _func;
 
     public:
@@ -29,23 +26,22 @@ namespace itertools {
          * accepts 1 primitive type. The compiler as default behavior tries to do implicit conversation of that
          * type to a members exists within the class, hiding a bug.
          */
-        explicit accumulate(Iter & iter): _iter(iter), _beg(_iter.begin()), _end_iter(iter.end()) {}
+        explicit accumulate(Iter & iter): accumulate(iter, _func) {}
 
-        //Support both rvalue and lvalue
-        accumulate(Iter & iter, lambada func): _iter(iter), _func(func), _beg(_iter.begin()), _end_iter(iter.end()){}
+        accumulate(Iter & iter, lambada func): _iter(iter){}
 
-        template <typename U>
         class iterator{
-            decltype((_iter.begin())) & _inner_iter;
+            Iter & _it;
+            decltype((_iter.begin())) _inner_iter;
             lambada _func;
-            U _sum;
+            typename Iter::value_type _sum;
         public:
 
-            iterator(decltype((_iter.begin())) & inner_iter, lambada func): _inner_iter(inner_iter), _func(func), _sum(*inner_iter){}
+            iterator(Iter & it, lambada func):  _it(it), _inner_iter(it.begin()), _func(func), _sum(*_inner_iter){}
 
             //Iterator class must provide overloading of operators *, ++, !=
-            U operator*() const { return _sum; }
-            bool operator==(const iterator& other) const { return _inner_iter == other._inner_iter; }
+            auto operator*() const { return _sum; }
+            bool operator==(const iterator& other) const { return _inner_iter == _it.end(); }
             bool operator!=(const iterator& other) const { return !(*this == other); }
             iterator& operator++(){
                 ++_inner_iter;
@@ -54,8 +50,8 @@ namespace itertools {
             } //prefix ++
         };
 
-        auto begin(){ return iterator<decltype(*(_iter.begin()))>(_beg, _func);}
-        auto end(){ return iterator<decltype(*(_iter.begin()))>(_end_iter, _func);}
+        auto begin(){return iterator(_iter, _func);}
+        auto end(){return iterator(_iter, _func);}
 
     };
 }

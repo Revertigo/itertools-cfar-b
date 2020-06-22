@@ -20,6 +20,7 @@ namespace itertools {
 
     public:
         range(uint start, uint end): _start(start), _end(end){};
+        typedef int value_type;//For compatibility
 
         class iterator
         {
