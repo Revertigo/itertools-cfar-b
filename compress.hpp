@@ -6,7 +6,6 @@
 #define ITERTOOLS_CFAR_A_COMPRESS_HPP
 
 #include <vector>
-#include <iostream>
 using namespace std;
 
 namespace itertools {
@@ -20,25 +19,25 @@ namespace itertools {
     public:
         //l-value ctor
         compress(Iter & iter, vector<bool> & filter): _iter(iter), _filter(filter), _beg(_iter.begin()), _end_iter(iter.end()){}
-        //We need a reference to reference ctor in order to support passing reference of rvalue(for range())
+        //We need a reference to reference ctor in order to support passing reference of rvalue
         compress(Iter && iter, vector<bool> & filter): _iter(iter), _filter(filter), _beg(_iter.begin()), _end_iter(iter.end()){}
 
-        template <typename U>
         class iterator{
-            decltype((_iter.begin())) & _inner_iter;
             compress & _compress;
+            decltype((_iter.begin())) _inner_iter;
             int _indexer;
+
         public:
 
-            iterator(decltype((_iter.begin())) & inner_iter, compress & compress): _inner_iter(inner_iter), _compress(compress), _indexer(0)
+            iterator(compress & compress): _inner_iter(compress._iter.begin()), _compress(compress), _indexer(0)
             {
                 //Check for first element
                 for(; _inner_iter != _compress._end_iter && !_compress._filter[_indexer]; ++_inner_iter, ++_indexer);//skip who ever not matching the filter
             }
 
             //Iterator class must provide overloading of operators *, ++, !=
-            U operator*() const { return *_inner_iter; }
-            bool operator==(const iterator& other) const { return _inner_iter == other._inner_iter; }
+            auto operator*() const { return *_inner_iter; }
+            bool operator==(const iterator& other) const { return _inner_iter == _compress._iter.end(); }
             bool operator!=(const iterator& other) const { return !(*this == other); }
             iterator& operator++(){
                 ++_inner_iter;
@@ -48,8 +47,8 @@ namespace itertools {
             } //prefix ++
         };
 
-        auto begin(){ return iterator<decltype(*(_iter.begin()))>(_beg, *this);}
-        auto end(){ return iterator<decltype(*(_iter.begin()))>(_end_iter, *this);}
+        auto begin(){ return iterator(*this);}
+        auto end(){ return iterator(*this);}
     };
 }
 
