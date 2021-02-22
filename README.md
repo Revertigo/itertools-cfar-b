@@ -1,6 +1,8 @@
-<div dir="rtl" lang="he">
+# Itertools
 
-# איטרטורים - שלב ב
-
-</div>
-</div>
+## Overview
+This project contains implementations of four different known iterators:  
+-range  
+-accumulate  
+-filterfalse  
+-compress
