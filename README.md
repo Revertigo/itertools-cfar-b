@@ -1,8 +1,8 @@
 # Itertools
 
 ## Overview
-This project contains implementations of four different known iterators:  
--range  
--accumulate  
--filterfalse  
--compress
+This project contains implementation of four different known iterators:  
+- range  
+- accumulate  
+- filterfalse  
+- compress
